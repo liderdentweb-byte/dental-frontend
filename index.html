@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Software Dental - Clínica Odontológica</title>
+  <link rel="stylesheet" href="estilos.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="container">
+    <h1 id="titulo-principal">🦷 Software Dental Profesional</h1>
+
+    <!-- Botones de utilidades -->
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+      <div>
+        <div class="dropdown-idioma">
+          <button class="btn-secundario" id="btn-idioma">ES</button>
+          <div class="dropdown-content-idioma" id="menu-idiomas">
+            <button class="btn-idioma-item" data-idioma="es">🇪🇸 Español</button>
+            <button class="btn-idioma-item" data-idioma="en">🇺🇸 English</button>
+            <button class="btn-idioma-item" data-idioma="pt">🇧🇷 Português</button>
+            <button class="btn-idioma-item" data-idioma="fr">🇫🇷 Français</button>
+            <button class="btn-idioma-item" data-idioma="de">🇩🇪 Deutsch</button>
+            <button class="btn-idioma-item" data-idioma="it">🇮🇹 Italiano</button>
+          </div>
+        </div>
+      </div>
+      <div style="text-align: right;">
+        <button class="btn-secundario" onclick="toggleModoOscuro()" id="btn-modo-oscuro">🌙 Modo Oscuro</button>
+      </div>
+    </div>
+
+    <!-- Formulario de paciente -->
+    <div class="form-group">
+      <div><label id="label-nombre">Nombre:</label><input type="text" id="nombre" placeholder="Nombre completo" /></div>
+      <div><label id="label-correo">Correo:</label><input type="email" id="correo" /></div>
+      <div><label id="label-celular">Celular:</label><input type="tel" id="celular" /></div>
+      <div><label id="label-edad">Edad:</label><input type="number" id="edad" min="1" max="120" /></div>
+      <div><label id="label-doctor">Credenciales:</label><input type="text" id="doctor" value="" /></div>
+      <div><label id="label-fecha">Fecha:</label><input type="date" id="fecha" /></div>
+    </div>
+
+    <div class="botones">
+      <button class="btn-nuevo" onclick="nuevoPaciente()" id="btn-nuevo">Nuevo Paciente</button>
+      <button class="btn-buscar" onclick="mostrarListaPacientes()" id="btn-buscar">Buscar Paciente</button>
+      <button class="btn-guardar" onclick="guardarPaciente()" id="btn-guardar">Guardar Paciente</button>
+      <button class="btn-limpiar" onclick="limpiarOdontograma()" id="btn-limpiar">Limpiar Odontograma</button>
+      <button class="btn-secundario" onclick="abrirModalGestionTratamientos('es')">⚙️ Tratamientos (ES)</button>
+      <button class="btn-secundario" onclick="abrirModalGestionTratamientos('en')">⚙️ Treatments (EN)</button>
+      <button class="btn-secundario" onclick="abrirModalTratamientoGeneral()" id="btn-agregar-tratamiento-general">➕ Tratamientos Generales</button>
+    </div>
+
+    <!-- Odontograma -->
+    <h2 id="titulo-odontograma">Odontograma (Nomenclatura FDI)</h2>
+    <div class="odontograma-completo">
+      <div class="arcada-adultos" id="superior-adultos"></div>
+      <div class="arcada-temporales" id="superior-temporales"></div>
+      <div class="arcada-temporales" id="inferior-temporales"></div>
+      <div class="arcada-adultos" id="inferior-adultos"></div>
+    </div>
+
+    <!-- Tratamientos asignados -->
+    <div class="tratamientos">
+      <h3 id="titulo-tratamientos">Tratamientos Asignados</h3>
+      <table>
+        <thead>
+          <tr>
+            <th id="th-diente">Diente</th>
+            <th id="th-tratamiento">Tratamiento</th>
+            <th id="th-precio">Precio</th>
+            <th id="th-acciones">Acciones</th>
+          </tr>
+        </thead>
+        <tbody id="cuerpo-tabla"></tbody>
+      </table>
+      <div class="total-tratamientos">
+        Total: $<span id="total-monto">0.00</span>
+      </div>
+      <div class="descuento-seccion">
+        <input type="number" id="descuento-porcentaje" placeholder="%" min="0" max="100" />
+        <button class="btn-descuento" onclick="aplicarDescuento()" id="btn-descuento">Aplicar Descuento</button>
+        <div id="total-con-descuento"></div>
+      </div>
+    </div>
+
+    <div class="botones">
+      <div class="dropdown-export">
+        <button class="btn-pdf" id="btn-exportar-menu">📥 Exportar</button>
+        <div class="dropdown-content" id="menu-exportar">
+          <button class="btn-pdf" onclick="exportarPDF()" id="btn-exportar-pdf">PDF (Presupuesto)</button>
+          <button class="btn-word" onclick="exportarWord()" id="btn-exportar-word">Word (Presupuesto)</button>
+          <button class="btn-pdf" onclick="exportarEvolucionPDF()" id="btn-exportar-evolucion-pdf">PDF (Evolución)</button>
+          <button class="btn-word" onclick="exportarEvolucionWord()" id="btn-exportar-evolucion-word">Word (Evolución)</button>
+        </div>
+      </div>
+      
+      <button class="btn-historia" onclick="abrirHistoriaClinica()" id="btn-historia">Evolución Clínica</button>
+      <button class="btn-radiografia" onclick="abrirRadiografias()" id="btn-radiografias">Radiografías</button>
+      <button class="btn-adeudo" onclick="mostrarAdeudos()" id="btn-adeudos">Ver Adeudos</button>
+      <button class="btn-abono" onclick="abrirModalAbono()" id="btn-abono">Registrar Abono</button>
+      <button class="btn-secundario" onclick="descargarRespaldoExcel()" id="btn-respaldo">💾 Respaldo</button>
+      <button class="btn-cargar-excel" onclick="abrirModalCargaExcel()" id="btn-cargar-excel">📤 Cargar Pacientes</button>
+    </div>
+  </div>
+
+  <!-- Modal Tratamiento -->
+  <div id="modalTratamiento" class="modal">
+    <div class="modal-content">
+      <h3 id="titulo-modal-tratamiento">Tratamientos para diente <span id="dienteActual"></span></h3>
+      <div id="opciones-tratamientos"></div>
+      <button class="btn-cerrar" onclick="cerrarModalTratamientos()" id="btn-cerrar-tratamiento">Cerrar</button>
+    </div>
+  </div>
+
+  <!-- Modal Pacientes -->
+  <div id="modalPacientes" class="modal">
+    <div class="modal-content" style="max-width: 500px;">
+      <h3 id="titulo-modal-pacientes">Seleccionar Paciente</h3>
+      <input type="text" id="buscador-pacientes" placeholder="Buscar por nombre..." style="width: 100%; padding: 8px; margin-bottom: 10px; font-size: 14px;" oninput="filtrarPacientes()" />
+      <div id="lista-pacientes-modal"></div>
+      <button class="btn-cerrar" onclick="cerrarModalPacientes()" id="btn-cerrar-pacientes">Cerrar</button>
+    </div>
+  </div>
+
+  <!-- Modal Historia Clínica (renombrado a Evolución) -->
+  <div id="modalHistoria" class="modal">
+    <div class="modal-content historia-grande">
+      <h3 id="titulo-modal-historia">Evolución Clínica</h3>
+      <div class="form-group">
+        <div>
+          <label id="label-antecedentes">Antecedentes Médicos:</label>
+          <textarea id="antecedentes" placeholder="Antecedentes médicos"></textarea>
+        </div>
+        <div>
+          <label id="label-motivo">Motivo de Consulta:</label>
+          <textarea id="motivo" placeholder="Motivo de la visita"></textarea>
+        </div>
+        <div>
+          <label id="label-diagnostico">Diagnóstico:</label>
+          <textarea id="diagnostico" placeholder="Diagnóstico clínico"></textarea>
+        </div>
+      </div>
+
+      <!-- Sección de Evolución -->
+      <h4 id="titulo-evolucion">Evolución Clínica</h4>
+      <div class="evolucion">
+        <button class="btn-guardar" onclick="abrirModalEvolucion()" id="btn-agregar-tratamiento-evolucion">➕ Agregar Tratamiento</button>
+        <button class="btn-pdf" onclick="exportarEvolucionPDF()">📄 Evolución (PDF)</button>
+        <table id="tabla-evolucion">
+          <thead>
+            <tr>
+              <th id="th-fecha-evol">Fecha</th>
+              <th id="th-tratamiento-evol">Tratamiento</th>
+              <th id="th-diente-evol">Diente</th>
+              <th id="th-costo-evol">Costo</th>
+              <th id="th-abono-evol">Abono</th>
+              <th id="th-saldo-evol">Saldo</th>
+              <th id="th-accion-evol">Acción</th>
+            </tr>
+          </thead>
+          <tbody id="cuerpo-evolucion"></tbody>
+        </table>
+      </div>
+
+      <div class="botones-historia">
+        <button class="btn-guardar" onclick="guardarHistoria()" id="btn-guardar-historia">💾 Guardar Evolución</button>
+        <button class="btn-word" onclick="exportarEvolucionWord()" id="btn-descargar-word-evolucion">📄 Descargar en Word</button>
+        <button class="btn-cerrar" onclick="cerrarHistoriaClinica()" id="btn-cerrar-historia">Cerrar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Evolución -->
+  <div id="modalEvolucion" class="modal">
+    <div class="modal-content">
+      <h3 id="titulo-modal-evolucion">Registrar Evolución</h3>
+      <label id="label-fecha-evolucion">Fecha:</label>
+      <input type="date" id="fecha-evolucion" />
+      <label id="label-tratamiento-evolucion">Tratamiento:</label>
+      <input type="text" id="tratamiento-evolucion" />
+      <label id="label-diente-evolucion">Diente:</label>
+      <input type="text" id="diente-evolucion" />
+      <label id="label-costo-evolucion">Costo:</label>
+      <input type="number" id="costo-evolucion" step="0.01" />
+      <label id="label-abono-evolucion">Abono:</label>
+      <input type="number" id="abono-evolucion" step="0.01" />
+      <br><br>
+      <button class="btn-guardar" onclick="guardarEvolucion()" id="btn-guardar-evolucion">Guardar</button>
+      <button class="btn-cerrar" onclick="cerrarModalEvolucion()" id="btn-cerrar-evolucion">Cancelar</button>
+    </div>
+  </div>
+
+  <!-- Modal Radiografías -->
+  <div id="modalRadiografias" class="modal">
+    <div class="modal-content">
+      <h3 id="titulo-modal-radiografias">Radiografías</h3>
+      <div class="subir-radiografia">
+        <input type="file" id="archivo-radiografia" multiple accept="*/*" />
+        <button class="btn-radiografia" onclick="subirRadiografias()" id="btn-subir-radiografias">Subir</button>
+      </div>
+      <div class="galeria" id="galeria-radiografias"></div>
+      <button class="btn-cerrar" onclick="cerrarRadiografias()" id="btn-cerrar-radiografias">Cerrar</button>
+    </div>
+  </div>
+
+  <!-- Modal Carga Excel -->
+  <div id="modalCargaExcel" class="modal">
+    <div class="modal-content">
+      <h3 id="titulo-modal-carga-excel">Cargar Pacientes</h3>
+      <p id="texto-formato-excel">Formato esperado: columnas <code>nombre, correo, celular, edad, credenciales, fecha</code></p>
+      <input type="file" id="archivo-excel" accept=".xlsx, .xls" />
+      <br><br>
+      <button class="btn-guardar" onclick="cargarPacientesDesdeExcel()">Cargar Pacientes</button>
+      <button class="btn-cerrar" onclick="cerrarModalCargaExcel()">Cancelar</button>
+    </div>
+  </div>
+
+  <!-- Modal Gestionar Tratamientos -->
+  <div id="modalGestionTratamientos" class="modal">
+    <div class="modal-content" style="max-width: 500px;">
+      <h3 id="titulo-modal-gestion">Gestionar Tratamientos</h3>
+      <div id="lista-tratamientos-globales"></div>
+      <button class="btn-guardar" onclick="abrirModalNuevoTratamiento()">➕ Agregar Tratamiento</button>
+      <button class="btn-cerrar" onclick="cerrarModalGestionTratamientos()">Cerrar</button>
+    </div>
+  </div>
+
+  <!-- Modal Nuevo Tratamiento -->
+  <div id="modalNuevoTratamiento" class="modal">
+    <div class="modal-content">
+      <h3 id="titulo-modal-nuevo-tratamiento">Nuevo Tratamiento</h3>
+      <label id="label-nombre-tratamiento">Nombre:</label>
+      <input type="text" id="nuevoNombreTratamiento" placeholder="Ej: Endodoncia" />
+      <label id="label-precio-tratamiento">Precio:</label>
+      <input type="number" id="nuevoPrecioTratamiento" placeholder="0.00" step="0.01" min="0" />
+      <br><br>
+      <button class="btn-guardar" onclick="agregarTratamientoGlobal()">Agregar</button>
+      <button class="btn-cerrar" onclick="cerrarModalNuevoTratamiento()">Cancelar</button>
+    </div>
+  </div>
+
+  <!-- Librerías EXTERNAS -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
+  <script src="https://unpkg.com/docx@7.4.1/build/index.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://cdn.sheetjs.com/xlsx-0.20.0/package/dist/xlsx.full.min.js"></script>
+  <script src="script.js" defer></script>
+
+  <!-- SVG Sprites para dientes -->
+  <svg style="display:none;" xmlns="http://www.w3.org/2000/svg">
+    <!-- (Todo el contenido de tus SVG para los dientes va aquí) -->
+  </svg>
+</body>
+</html>
